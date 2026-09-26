@@ -1,5 +1,6 @@
 FROM prestashop/prestashop:latest
 
-# Patch PrestaShop's database check class to use InnoDB instead of MyISAM
-RUN sed -i "s/\$engine = 'MyISAM';/\$engine = 'InnoDB';/g" /var/www/html/classes/db/DbPDO.php || true
-RUN sed -i "s/\$engine = 'MyISAM';/\$engine = 'InnoDB';/g" /var/www/html/classes/db/DbMySQLi.php || true
+# Patch all database and installer files to replace MyISAM with InnoDB globally
+RUN find /var/www/html -type f -name "*.php" -exec sed -i "s/ENGINE=MyISAM/ENGINE=InnoDB/g" {} + || true
+RUN find /var/www/html -type f -name "*.php" -exec sed -i "s/'MyISAM'/'InnoDB'/g" {} + || true
+RUN find /var/www/html -type f -name "*.php" -exec sed -i "s/\"MyISAM\"/\"InnoDB\"/g" {} + || true
